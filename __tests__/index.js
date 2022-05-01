@@ -53,3 +53,37 @@ describe('Queuing with reliable network', () => {
 		expect(mockFetch.mock.calls[1][0].url).toEqual(request2.url);
 	});
 });
+describe('Queuing when completely offline', () => {
+	test('Add requests to queue', async () => {
+		const mockFetch = jest.spyOn(global, "fetch").mockRejectedValue(new TypeError('Failed to fetch'));
+		const request1 = new BloblessRequest("https://example.com/api/endpoint1", {method: 'PUT'});
+		const request2 = new BloblessRequest("https://example.com/api/endpoint2", {method: 'PATCH'});
+
+		await queueAndAttemptRequest(request1);
+
+		let queue = await getOutstandingRequests();
+		expect(queue).toHaveLength(1);
+		expect(queue[0].method).toEqual(request1.method);
+		expect(queue[0].url).toEqual(request1.url);
+
+		await new Promise(process.nextTick);
+		queue = await getOutstandingRequests();
+		expect(queue).toHaveLength(1);
+		expect(mockFetch).toHaveBeenCalled();
+		expect(mockFetch.mock.calls[0][0].method).toEqual(request1.method);
+		expect(mockFetch.mock.calls[0][0].url).toEqual(request1.url);
+
+		await queueAndAttemptRequest(request2);
+		queue = await getOutstandingRequests();
+		expect(queue).toHaveLength(2);
+		expect(queue[1].method).toEqual(request2.method);
+		expect(queue[1].url).toEqual(request2.url);
+
+		await new Promise(process.nextTick);
+		queue = await getOutstandingRequests();
+		expect(queue).toHaveLength(2);
+		expect(mockFetch).toHaveBeenCalled();
+		expect(mockFetch.mock.calls[1][0].method).toEqual(request2.method);
+		expect(mockFetch.mock.calls[1][0].url).toEqual(request2.url);
+	});
+});

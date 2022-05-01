@@ -18,7 +18,10 @@ const dbPromise = openDB('restful-queue', 1, {
  */
 export async function queueAndAttemptRequest(request) {
 	const requestid = await queueRequest(request);
-	syncRequests();
+
+	// Asynchronously fire off a sync
+	// Suppress any failures, knowing the request is stored safely in the queue
+	syncRequests().catch(() => {});
 	return new Response(new Blob(), {status: 202, statusText: "Added to Queue"});
 }
 
@@ -105,11 +108,12 @@ export function syncRequests() {
 	// If there's no existing sync, then start one
 	if (!currentSync) {
 		currentSync = attemptOutstandingRequests();
-		return;
-	}
+	} else {
 
-	// Otherwise, queue another sync after the current one.
-	currentSync = currentSync.then(attemptOutstandingRequests);
+		// Otherwise, queue another sync after the current one.
+		currentSync = currentSync.then(attemptOutstandingRequests);
+	}
+	return currentSync;
 
 }
 
