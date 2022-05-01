@@ -1,0 +1,42 @@
+{
+  "name": "restful-queue",
+  "version": "0.0.1",
+  "description": "A queue for service workers which send requests to a restful API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucas42/restful-queue.git"
+  },
+  "keywords": [
+    "Service",
+    "Worker",
+    "Rest",
+    "API",
+    "IndexDB"
+  ],
+  "author": "Luke Blaney",
+  "bugs": {
+    "url": "https://github.com/lucas42/restful-queue/issues"
+  },
+  "homepage": "https://github.com/lucas42/restful-queue#readme",
+  "dependencies": {
+    "idb": "^7.0.1"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^3.1.7",
+    "jest": "^28.0.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "setupFiles": [
+      "fake-indexeddb/auto"
+    ]
+  }
+}
