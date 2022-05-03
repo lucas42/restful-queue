@@ -98,20 +98,28 @@ export async function getOutstandingRequests() {
 }
 
 let currentSync = null;
+let queueSync = false;
 
 /**
  * Starts off an asynchronous function to sync up any outstanding requests with the server
  * Ensures there's only one running at a time to avoid race conditions
  */
 export function syncRequests() {
+	queueSync = false;
 
 	// If there's no existing sync, then start one
 	if (!currentSync) {
-		currentSync = attemptOutstandingRequests();
+		currentSync = attemptOutstandingRequests()
+
+		// Once complete, set currentSync back to null, regardless of outcome
+		.finally(() => {
+			currentSync = null;
+			if (queueSync) return syncRequests();
+		});
 	} else {
 
 		// Otherwise, queue another sync after the current one.
-		currentSync = currentSync.then(attemptOutstandingRequests);
+		queueSync = true;
 	}
 	return currentSync;
 
