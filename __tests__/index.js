@@ -60,8 +60,8 @@ describe('Queuing with reliable network', () => {
 		expect(mockFetch.mock.calls[1][0].url).toEqual(request2.url);
 	});
 });
-describe('Queuing when completely offline', () => {
-	test('Add requests to queue', async () => {
+describe('Queuing when requests fail', () => {
+	test('Completely Offline', async () => {
 		const mockFetch = jest.spyOn(global, "fetch").mockRejectedValue(new TypeError('Failed to fetch'));
 		const request1 = new BloblessRequest("https://example.com/api/endpoint3", {method: 'PUT'});
 		const request2 = new BloblessRequest("https://example.com/api/endpoint4", {method: 'PATCH'});
@@ -90,9 +90,7 @@ describe('Queuing when completely offline', () => {
 		expect(mockFetch.mock.calls[1][0].method).toEqual(request1.method);
 
 	});
-});
-describe('Server Errors treated same as completely offline', () => {
-	test('Add requests to queue', async () => {
+	test('Server Errors', async () => {
 		const mockFetch = jest.spyOn(global, "fetch").mockResolvedValue(new Response("<html>Error Page</html>",{status: 503, statusText: "Service Unavailable"}));
 		const request1 = new BloblessRequest("https://example.com/api/endpoint5", {method: 'PUT'});
 		const request2 = new BloblessRequest("https://example.com/api/endpoint6", {method: 'PATCH'});
@@ -121,11 +119,8 @@ describe('Server Errors treated same as completely offline', () => {
 		expect(mockFetch.mock.calls[1][0].method).toEqual(request1.method);
 
 	});
-});
-
-describe('Unresponsive network handled like offline', () => {
 	let rejectFetch;
-	test('Add requests to queue', async () => {
+	test('Unresponsive network', async () => {
 		// Use a promise which is unresolved until after the test, to simulate an unresponsive network
 		const mockFetch = jest.spyOn(global, "fetch").mockReturnValue(new Promise((resolve, reject) => {rejectFetch = reject}));
 		const request1 = new BloblessRequest("https://example.com/api/endpoint7", {method: 'PUT'});
@@ -154,6 +149,7 @@ describe('Unresponsive network handled like offline', () => {
 	});
 	afterEach(async () => {
 		if (rejectFetch) rejectFetch(new TypeError('Cancelling Fetch due to end of test'));
+		rejectFetch = null;
 	});
 });
 describe('Sync can be triggered on demand', () => {
