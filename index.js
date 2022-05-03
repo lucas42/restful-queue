@@ -56,6 +56,7 @@ async function queueRequest(request) {
  */
 async function attemptRequest(requestid, request) {
 	const response = await fetch(request);
+	if (!response.ok) throw new Error(`HTTP Error ${response.status} received`);
 	await removeFromQueue(requestid);
 	return response;
 }
