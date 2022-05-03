@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage"
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
+    "jsdoc": "jsdoc2md index.js > docs/API.md"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,8 @@
   },
   "devDependencies": {
     "fake-indexeddb": "^3.1.7",
-    "jest": "^28.0.3"
+    "jest": "^28.0.3",
+    "jsdoc-to-markdown": "^7.1.1"
   },
   "jest": {
     "testEnvironment": "node",
