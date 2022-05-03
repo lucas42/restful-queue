@@ -136,8 +136,8 @@ describe('Unresponsive network handled like offline', () => {
 	test('Add requests to queue', async () => {
 		// Use a promise which is unresolved until after the test, to simulate an unresponsive network
 		const mockFetch = jest.spyOn(global, "fetch").mockReturnValue(new Promise((resolve, reject) => {rejectFetch = reject}));
-		const request1 = new BloblessRequest("https://example.com/api/endpoint5", {method: 'PUT'});
-		const request2 = new BloblessRequest("https://example.com/api/endpoint6", {method: 'PATCH'});
+		const request1 = new BloblessRequest("https://example.com/api/endpoint7", {method: 'PUT'});
+		const request2 = new BloblessRequest("https://example.com/api/endpoint8", {method: 'PATCH'});
 
 		await queueAndAttemptRequest(request1);
 
@@ -167,5 +167,37 @@ describe('Unresponsive network handled like offline', () => {
 	});
 	afterEach(async () => {
 		if (rejectFetch) rejectFetch(new TypeError('Cancelling Fetch due to end of test'));
+	});
+});
+describe('Sync can be triggered on demand', () => {
+	test('Call syncRequests on a queue of failed requests', async () => {
+
+		// Created queue of failed requests
+		jest.spyOn(global, "fetch").mockRejectedValue(new TypeError('Failed to fetch'));
+		const request1 = new BloblessRequest("https://example.com/api/endpoint9", {method: 'PUT'});
+		const request2 = new BloblessRequest("https://example.com/api/endpoint10", {method: 'PATCH'});
+		await queueAndAttemptRequest(request1);
+		await queueAndAttemptRequest(request2);
+		expect(await getOutstandingRequests()).toHaveLength(2);
+
+		// Mock an online state again
+		const mockFetch = jest.spyOn(global, "fetch")
+			.mockReset()
+			.mockResolvedValue(new Response(null, {status: 204, statusText: "No Content"}));
+
+		// Trigger the function under test
+		await syncRequests();
+
+		// Check the queue has been emptied
+		expect(await getOutstandingRequests()).toHaveLength(0);
+
+		// Check it made a fetch call for each request
+		expect(mockFetch).toHaveBeenCalledTimes(2);
+
+		// Check the requests have been sent in the correct order
+		expect(mockFetch.mock.calls[0][0].url).toEqual(request1.url);
+		expect(mockFetch.mock.calls[0][0].method).toEqual(request1.method);
+		expect(mockFetch.mock.calls[1][0].url).toEqual(request2.url);
+		expect(mockFetch.mock.calls[1][0].method).toEqual(request2.method);
 	});
 });
