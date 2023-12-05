@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/lucas42/restful-queue#readme",
   "dependencies": {
-    "idb": "^7.0.1"
+    "idb": "^8.0.0"
   },
   "devDependencies": {
     "fake-indexeddb": "^5.0.1",
