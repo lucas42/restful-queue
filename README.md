@@ -20,3 +20,15 @@ self.addEventListener('fetch', event => {
 ## See also
 
 * [API documentation](https://github.com/lucas42/restful-queue/tree/main/docs/API.md)
+
+
+## Unit Testing
+Run:
+```
+npm test
+```
+
+## Publish to npm
+Make sure to bump the version number in package.json.
+
+Then run `npm publish` (assuming you're already logged in)
