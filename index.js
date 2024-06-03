@@ -58,7 +58,7 @@ async function attemptRequest(requestid, request) {
 	const response = await fetch(request);
 	if (!response.ok) throw new Error(`HTTP Error ${response.status} received`);
 	await removeFromQueue(requestid);
-	if (navigator && navigator.serviceWorker) navigator.serviceWorker.postMessage({type: 'restful-queue_complete', request, response});
+	if (serviceWorker) serviceWorker.postMessage({type: 'restful-queue_complete', request, response});
 	return response;
 }
 

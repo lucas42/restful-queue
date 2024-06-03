@@ -1,7 +1,7 @@
 import {jest} from '@jest/globals';
 
 
-Object.defineProperty(global.navigator, 'serviceWorker', {
+Object.defineProperty(global, 'serviceWorker', {
 	value: { postMessage: jest.fn()}
 });
 
@@ -15,13 +15,13 @@ afterEach(async () => {
 	jest.spyOn(global, "fetch").mockResolvedValue(new Response({status: 204, statusText: "No Content"}));
 	await syncRequests();
 	jest.spyOn(global, "fetch").mockClear();
-	jest.spyOn(global.navigator.serviceWorker, "postMessage").mockClear();
+	jest.spyOn(global.serviceWorker, "postMessage").mockClear();
 });
 
 describe('Queuing with reliable network', () => {
 	test('Add requests to queue', async () => {
 		const mockFetch = jest.spyOn(global, "fetch").mockResolvedValue(new Response(null, {status: 204, statusText: "No Content"}));
-		const mockPostMessage = jest.spyOn(global.navigator.serviceWorker, "postMessage");
+		const mockPostMessage = jest.spyOn(global.serviceWorker, "postMessage");
 		const request1 = new Request("https://example.com/api/endpoint1", {method: 'PUT'});
 		const request2 = new Request("https://example.com/api/endpoint2", {method: 'PATCH'});
 
@@ -64,7 +64,7 @@ describe('Queuing with reliable network', () => {
 describe('Queuing when requests fail', () => {
 	test('Completely Offline', async () => {
 		const mockFetch = jest.spyOn(global, "fetch").mockRejectedValue(new TypeError('Failed to fetch'));
-		const mockPostMessage = jest.spyOn(global.navigator.serviceWorker, "postMessage");
+		const mockPostMessage = jest.spyOn(global.serviceWorker, "postMessage");
 		const request1 = new Request("https://example.com/api/endpoint3", {method: 'PUT'});
 		const request2 = new Request("https://example.com/api/endpoint4", {method: 'PATCH'});
 
@@ -96,7 +96,7 @@ describe('Queuing when requests fail', () => {
 	});
 	test('Server Errors', async () => {
 		const mockFetch = jest.spyOn(global, "fetch").mockResolvedValue(new Response("<html>Error Page</html>",{status: 503, statusText: "Service Unavailable"}));
-		const mockPostMessage = jest.spyOn(global.navigator.serviceWorker, "postMessage");
+		const mockPostMessage = jest.spyOn(global.serviceWorker, "postMessage");
 		const request1 = new Request("https://example.com/api/endpoint5", {method: 'PUT'});
 		const request2 = new Request("https://example.com/api/endpoint6", {method: 'PATCH'});
 
@@ -130,7 +130,7 @@ describe('Queuing when requests fail', () => {
 	test('Unresponsive network', async () => {
 		// Use a promise which is unresolved until after the test, to simulate an unresponsive network
 		const mockFetch = jest.spyOn(global, "fetch").mockReturnValue(new Promise((resolve, reject) => {rejectFetch = reject}));
-		const mockPostMessage = jest.spyOn(global.navigator.serviceWorker, "postMessage");
+		const mockPostMessage = jest.spyOn(global.serviceWorker, "postMessage");
 		const request1 = new Request("https://example.com/api/endpoint7", {method: 'PUT'});
 		const request2 = new Request("https://example.com/api/endpoint8", {method: 'PATCH'});
 
@@ -167,7 +167,7 @@ describe('Sync can be triggered on demand', () => {
 
 		// Created queue of failed requests
 		jest.spyOn(global, "fetch").mockRejectedValue(new TypeError('Failed to fetch'));
-		const mockPostMessage = jest.spyOn(global.navigator.serviceWorker, "postMessage");
+		const mockPostMessage = jest.spyOn(global.serviceWorker, "postMessage");
 		const request1 = new Request("https://example.com/api/endpoint9", {method: 'PUT'});
 		const request2 = new Request("https://example.com/api/endpoint10", {method: 'PATCH'});
 		await queueAndAttemptRequest(request1);
