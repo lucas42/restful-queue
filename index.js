@@ -157,3 +157,6 @@ async function pruneQueueByUrl(url) {
 		await removeFromQueue(id);
 	}
 }
+
+// Automatically try to sync any requests in the queue any time the device comes online
+if (typeof window !== 'undefined') window.addEventListener("online", syncRequests);
