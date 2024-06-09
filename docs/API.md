@@ -29,6 +29,10 @@ Ensures there&#39;s only one running at a time to avoid race conditions</p>
 Stops after the first failure and doesn&#39;t attempt any subsequent requests in the queue.
 NB: Calling this function whilst a previous invocation hasn&#39;t completed yet, may cause a race condition.  Use the <code>syncRequests</code> function to avoid this.</p>
 </dd>
+<dt><a href="#pruneQueueByUrl">pruneQueueByUrl(url)</a> ⇒ <code>Promise</code></dt>
+<dd><p>Removes all PUT or DELETE requests to the given URL from the queue
+This is because a subsequest request will make these unneeded</p>
+</dd>
 </dl>
 
 <a name="queueAndAttemptRequest"></a>
@@ -110,3 +114,16 @@ NB: Calling this function whilst a previous invocation hasn't completed yet, may
 
 **Kind**: global function  
 **Returns**: <code>Promise</code> - A promise which resolves when all requests have been succesfully removed from the queue, or rejects after encountering the first failure  
+<a name="pruneQueueByUrl"></a>
+
+## pruneQueueByUrl(url) ⇒ <code>Promise</code>
+Removes all PUT or DELETE requests to the given URL from the queue
+This is because a subsequest request will make these unneeded
+
+**Kind**: global function  
+**Returns**: <code>Promise</code> - A promise which resolves when the pruning has completed  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | The URL of requests to prune from the queue |
+
