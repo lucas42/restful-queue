@@ -42,6 +42,7 @@ async function queueRequest(request) {
 	const rawData = { url, method, headers, body };
 
 	const db = await dbPromise;
+	if (method == "PUT" || method == "DELETE") await pruneQueueByUrl(url);
 	const requestid = await db.add('requests', rawData);
 	return requestid;
 }
@@ -137,5 +138,22 @@ async function attemptOutstandingRequests() {
 	const requests = await getOutstandingRequestsAndIds();
 	for (const {id, request} of requests) {
 		await attemptRequest(id, request);
+	}
+}
+
+/**
+ * Removes all PUT or DELETE requests to the given URL from the queue
+ * This is because a subsequest request will make these unneeded
+ *
+ * @param {string} url The URL of requests to prune from the queue
+ *
+ * @returns {Promise} A promise which resolves when the pruning has completed
+ */
+async function pruneQueueByUrl(url) {
+	const queue = await getOutstandingRequestsAndIds();
+	for (const {id, request} of queue) {
+		if (request.url != url) continue;
+		if (request.method != 'PUT' && request.method != 'DELETE') continue;
+		await removeFromQueue(id);
 	}
 }
