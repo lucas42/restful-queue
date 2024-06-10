@@ -158,5 +158,19 @@ async function pruneQueueByUrl(url) {
 	}
 }
 
-// Automatically try to sync any requests in the queue any time the device comes online
-if (typeof window !== 'undefined') window.addEventListener("online", syncRequests);
+// Code which only gets run when in the context of a service worker
+if (typeof self === "object" && !!self.serviceWorker) {
+
+	/**
+	 * Attempts to sync any requests in the queue every 5 minutes
+	 * If there are no requests in the queue, the impact of this should be negligible
+	 */
+	function regularSync() {
+		setTimeout(regularSync, 5 * 60 * 1000);
+		syncRequests();
+	}
+	regularSync();
+
+	// Automatically try to sync any requests in the queue any time the device comes online
+	self.addEventListener("online", syncRequests);
+}
