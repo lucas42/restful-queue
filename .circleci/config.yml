@@ -22,7 +22,7 @@ workflows:
   test-publish:
     jobs:
       - test
-      - lucos/component-publish
+      - lucos/component-publish:
           requires:
             - test
           filters:
