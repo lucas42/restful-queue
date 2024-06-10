@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  lucos: lucos/deploy@0
 
 jobs:
   test:
@@ -17,6 +19,13 @@ jobs:
 
 workflows:
   version: 2
-  build:
+  test-publish:
     jobs:
       - test
+      - lucos/component-publish
+        requires:
+          - test
+          filters:
+          branches:
+            only:
+              - main
