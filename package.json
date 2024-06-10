@@ -1,6 +1,6 @@
 {
   "name": "restful-queue",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A queue for service workers which send requests to a restful API",
   "main": "index.js",
   "type": "module",
