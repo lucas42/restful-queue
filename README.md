@@ -29,6 +29,7 @@ npm test
 ```
 
 ## Publish to npm
-Make sure to bump the version number in package.json.
 
-Then run `npm publish` (assuming you're already logged in)
+Automatically publishes on the `main` branch
+
+Make sure to bump the version number in package.json. (Can use `npm version ${version_number}`).
