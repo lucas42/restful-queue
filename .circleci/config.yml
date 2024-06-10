@@ -23,9 +23,9 @@ workflows:
     jobs:
       - test
       - lucos/component-publish
-          requires:
-            - test
-            filters:
-            branches:
-              only:
-                - main
+        requires:
+          - test
+        filters:
+          branches:
+            only:
+              - main
