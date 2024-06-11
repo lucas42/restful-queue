@@ -5,7 +5,7 @@ orbs:
 jobs:
   test:
     docker:
-      - image: cimg/node:21.4
+      - image: cimg/node:current
     steps:
       - checkout
       - run:
