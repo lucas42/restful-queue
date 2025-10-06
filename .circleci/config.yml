@@ -25,7 +25,7 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - lucos/component-publish:
+      - lucos/component-npm-publish:
           requires:
             - test
           filters:
