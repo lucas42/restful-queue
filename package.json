@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
-    "jsdoc": "jsdoc2md index.js > docs/API.md && jsdoc2md --private index.js > docs/API\\ -\\ Internal.md"
+    "jsdoc": "jsdoc2md index.js > docs/API.md && jsdoc2md --private index.js > docs/API\\ -\\ Internal.md",
+    "build": ""
   },
   "repository": {
     "type": "git",
