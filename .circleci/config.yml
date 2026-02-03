@@ -25,11 +25,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-      - lucos/component-npm-publish:
+      - lucos/release-npm:
           requires:
             - test
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
