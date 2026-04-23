@@ -28,3 +28,6 @@ workflows:
       - lucos/release-npm:
           requires:
             - test
+          filters:
+            branches:
+              only: main
